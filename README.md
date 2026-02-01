@@ -1,3 +1,64 @@
+# Nand2Tetris Implementation
+Building a modern computer system from first principles, starting with a single NAND gate.このリポジトリは、「コンピュータシステムの理論と実装（Nand2Tetris）」プロジェクトの実装記録です。論理ゲートの物理的な最小単位から、ALU、CPU、メモリ、そしてOSに至るまでの全レイヤーを、ブラックボックスなしで実装する過程を記録しています。
+
+## 🚀 Project Status現在の進捗状況:
+ Phase 1 - Hardware Implementation
+ [x] Project 01: Boolean Logic (Not, And, Or, Xor, Mux, DMux, 16-bit variants)
+ [ ] Project 02: Boolean Arithmetic (HalfAdder, FullAdder, Inc16, ALU) 👈 Current Focus
+ [ ] Project 03: Sequential Logic (DFF, Bit, Register, RAM8/64/512/4K/16K, PC)
+ [ ] Project 04: Machine Language (Assembly scripts for Mult, Fill)
+ [ ] Project 05: Computer Architecture (Memory, CPU, Computer)
+ [ ] Project 06: Assembler (Software implementation)
+ [ ] Project 07: VM I: Stack Arithmetic
+ [ ] Project 08: VM II: Program Control
+ [ ] Project 09: High-Level Language (Jack application)
+ [ ] Project 10: Compiler I: Syntax Analysis
+ [ ] Project 11: Compiler II: Code Generation
+ [ ] Project 12: Operating System
+ 
+## 💡 Technical Highlights
+ 1. Design Philosophy (設計思想)実装にあたっては、単なる動作確認だけでなく、以下のプロセスを徹底しています。
+ Mathematical Derivation:真理値表（Truth Table）を作成し、ド・モルガンの法則などを用いて論理式を最小化する。
+ Cost Optimization:シリコン面積（Nandゲート総数）を意識した回路設計を行う。
+ Verification:公式テストスクリプトによる完全な動作確認（"Comparison ended successfully"）を必須とする。
+ 
+ 2. Implementation Notes (実装メモ)Project 01: Boolean Logic
+ Xor Gate Optimization:標準的な Not(A)And(B) Or A And(Not(B)) の実装（Nand数9）ではなく、Or(A,B) And Nand(A,B) の構成（Nand数6）を採用し、33%のゲート削減に成功。
+ Bus Width Realization:Not16 などの実装を通じて、ビット幅が増えることの物理的なコスト（回路の並列配置）を体感。
+ 
+ Project 02: Boolean Arithmetic (In Progress)HalfAdder: Sum (Xor) と Carry (And) の並列処理による加算の実装。
+ ALU Design: 制御ビット（zx, nx, zy, ny, f, no）の組み合わせによる演算ロジックの設計。（設計進行中）
+ 
+ 📂 Directory Structure.
+
+├── projects/
+│   ├── 01/              # Boolean Logic (Done)
+│   │   ├── And.hdl
+│   │   ├── Mux.hdl
+│   │   ├── Xor.hdl      # Optimized implementation
+│   │   └── ...
+│   ├── 02/              # Boolean Arithmetic (In Progress)
+│   │   ├── HalfAdder.hdl
+│   │   ├── ALU.hdl
+│   │   └── ...
+│   └── ...
+├── docs/
+│   ├── schematics/      # 手書きの回路図、設計メモの画像
+│   └── notes/           # 技術的な考察ログ
+└── tools/               # 開発用ツール (HardwareSimulatorなど)
+
+## ✅ Verification 
+全てのチップは、Nand2Tetris提供のテストスイート (.tst files) を通過しています。
+
+### Test Result Example
+ (Project 01):Comparison ended successfully
+ 
+## 🛠 Environment & Tools
+Hardware Description Language (HDL)
+Nand2Tetris Software Suite (Hardware Simulator, CPU Emulator)
+Editor: VS Code (with HDL syntax highlighting)
+Version Control: Git / GitHub
+
 # From Nand to Tetris
 
 Building a Modern Computer From First Principles
