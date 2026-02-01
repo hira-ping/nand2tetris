@@ -3,18 +3,31 @@ Building a modern computer system from first principles, starting with a single 
 
 ## 🚀 Project Status現在の進捗状況:
  Phase 1 - Hardware Implementation
+
  [x] Project 01: Boolean Logic (Not, And, Or, Xor, Mux, DMux, 16-bit variants)
+
  [ ] Project 02: Boolean Arithmetic (HalfAdder, FullAdder, Inc16, ALU) 👈 Current Focus
+
  [ ] Project 03: Sequential Logic (DFF, Bit, Register, RAM8/64/512/4K/16K, PC)
+
  [ ] Project 04: Machine Language (Assembly scripts for Mult, Fill)
+
  [ ] Project 05: Computer Architecture (Memory, CPU, Computer)
+
  [ ] Project 06: Assembler (Software implementation)
+
  [ ] Project 07: VM I: Stack Arithmetic
+
  [ ] Project 08: VM II: Program Control
+
  [ ] Project 09: High-Level Language (Jack application)
+
  [ ] Project 10: Compiler I: Syntax Analysis
+
  [ ] Project 11: Compiler II: Code Generation
+
  [ ] Project 12: Operating System
+ 
  
 ## 💡 Technical Highlights
  1. Design Philosophy (設計思想)実装にあたっては、単なる動作確認だけでなく、以下のプロセスを徹底しています。
@@ -30,7 +43,8 @@ Building a modern computer system from first principles, starting with a single 
  ALU Design: 制御ビット（zx, nx, zy, ny, f, no）の組み合わせによる演算ロジックの設計。（設計進行中）
  
  📂 Directory Structure.
-
+ 
+```
 ├── projects/
 │   ├── 01/              # Boolean Logic (Done)
 │   │   ├── And.hdl
@@ -46,6 +60,7 @@ Building a modern computer system from first principles, starting with a single 
 │   ├── schematics/      # 手書きの回路図、設計メモの画像
 │   └── notes/           # 技術的な考察ログ
 └── tools/               # 開発用ツール (HardwareSimulatorなど)
+```
 
 ## ✅ Verification 
 全てのチップは、Nand2Tetris提供のテストスイート (.tst files) を通過しています。
