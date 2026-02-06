@@ -175,4 +175,31 @@
 
   * 最上位ビットのオーバーフローは無視する仕様。
 
+### Inc16 (16-bit Incrementer)
+* **Function:** 入力値に1を加算する (`out = in + 1`)。
+* **Interface:** `IN in[16]; OUT out[16];`
+* **Implementation:** `Add16` を使用し、一方の入力の最下位ビット(`b[0]`)のみを `true` に固定する。
+
+### ALU (Arithmetic Logic Unit)
+* **Function:** Hackコンピュータの計算中枢。2つの入力に対し、制御ビットに基づいた演算を行う。
+* **Interface:**
+  * **Inputs:** `x[16], y[16]`, `zx, nx, zy, ny, f, no`
+  * **Outputs:** `out[16]`, `zr, ng`
+
+#### Control Bits Logic (制御ロジック)
+入力データは以下の順序で加工される。
+
+| Step | Bit | Name | Action if bit == 1 | Implementation |
+|:---:|:---:|:---:|:---|:---|
+| 1 | **zx** | Zero x | 入力 `x` をゼロにする | `Mux16(x, false, zx)` |
+| 2 | **nx** | Not x | `x` を反転(Bitwise Not)する | `Not16` + `Mux16` |
+| 3 | **zy** | Zero y | 入力 `y` をゼロにする | `Mux16(y, false, zy)` |
+| 4 | **ny** | Not y | `y` を反転(Bitwise Not)する | `Not16` + `Mux16` |
+| 5 | **f** | Function | `1`: 加算 (`x+y`) <br> `0`: 論理積 (`x&y`) | `Add16`, `And16` + `Mux16` |
+| 6 | **no** | Not out | 出力を反転する | `Not16` + `Mux16` |
+
+#### Output Flags (出力フラグ)
+* **zr (Zero Flag):** `out == 0` のとき `1`。 (`Or8Way` x2 -> `Or` -> `Not` で判定)
+* **ng (Negative Flag):** `out < 0` のとき `1`。 (最上位ビット `out[15]` をそのまま出力)
+
 *Created by: hira-ping*
