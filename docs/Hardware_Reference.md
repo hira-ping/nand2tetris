@@ -202,4 +202,66 @@
 * **zr (Zero Flag):** `out == 0` のとき `1`。 (`Or8Way` x2 -> `Or` -> `Not` で判定)
 * **ng (Negative Flag):** `out < 0` のとき `1`。 (最上位ビット `out[15]` をそのまま出力)
 
+## 4. Sequential Logic (順序回路)
+
+### Clock & Time (クロックと時間)
+* **Concept:** Hackコンピュータは同期回路であり、全ての順序回路は「クロック信号」に合わせて状態を更新する。
+* **Notation:**
+    * $t$: 現在のクロックサイクル
+    * $t+1$: 次のクロックサイクル
+    * 順序回路の出力は、常に入力に対して**1クロック遅れて**変化する。
+
+### DFF (Data Flip-Flop)
+* **Function:** 最も基本的な記憶素子。入力を1クロックサイクルだけ遅延させて出力する。
+* **Interface:** `IN in; OUT out;`
+* **Logic:** $out(t+1) = in(t)$
+* **Implementation:** Nand2Tetrisシミュレータのプリミティブ（組み込み素子）として提供される。
+
+### Bit (1-Bit Register)
+* **Function:** 1ビットの情報を記憶（維持）または更新する。
+* **Interface:** `IN in, load; OUT out;`
+* **Logic:**
+    * **Load=1 (Write):** 次の時刻に新しい入力値 `in` を記憶する。
+      $$out(t+1) = in(t)$$
+    * **Load=0 (Maintain):** 次の時刻も現在の値 `out` を維持する（フィードバック）。
+      $$out(t+1) = out(t)$$
+* **Implementation:** `Mux` と `DFF` を組み合わせたフィードバックループ構造。
+    * `Mux` で「新しい値」か「前の値（ループ）」かを選び、`DFF` に入力する。
+
+### Register (16-Bit Register)
+* **Function:** 16ビットの情報を記憶する。
+* **Interface:** `IN in[16], load; OUT out[16];`
+* **Implementation:** 16個の `Bit` レジスタを並列配置し、`load` 信号を全ビットで共有（ブロードキャスト）する。
+
+### RAMn (Random Access Memory)
+* **Function:** $n$ 個の16ビットレジスタからなるメモリバンク。任意の場所（アドレス）にアクセスできる。
+* **Interface:** `IN in[16], load, address[k]; OUT out[16];`
+    * `k = log2(n)` (例: RAM8なら3ビット、RAM64なら6ビット)
+* **Logic:**
+    * **Read:** `load=0` の時、`address` で指定されたレジスタの値を出力する。
+    * **Write:** `load=1` の時、`address` で指定されたレジスタに `in` を書き込み、その値を出力する。
+
+#### Architecture Note: Address Decoding (アドレスデコーディング)
+RAMは以下の「サンドイッチ構造」で実装される。
+1.  **Write Logic (DMux):** `load` 信号をデコードし、指定されたレジスタ**のみ**に `1` を送る。他には `0` を送る。
+2.  **Storage (Registers):** 全てのレジスタが並列に配置される。
+3.  **Read Logic (Mux):** 全てのレジスタの出力を受け取り、指定された1つだけを選択して出力する。
+
+> **Insight:**
+> 外部からは「指定した1つのレジスタ」だけが動いているように見えるが、物理的には **「全てのレジスタが常に稼働している」**。
+> * 選択されていないレジスタも、`load=0`（記憶保持モード）として、クロックごとに自分自身の値をリフレッシュし続けている。
+> * この「全員が常に起きている」特性が、ハードウェアの電力消費の一因であり、同時に「どの場所でも同じ速度でアクセスできる（Random Access）」という特性を実現している。
+
+### PC (Program Counter)
+* **Function:** 次に実行すべき命令のアドレス（行番号）を保持・計算する。
+* **Interface:** `IN in[16], load, inc, reset; OUT out[16];`
+* **Logic:** 以下の優先順位で次の値を決定し、毎クロック更新する。
+    1.  **Reset:** `if reset(t-1) then out(t) = 0`
+    2.  **Load:** `else if load(t-1) then out(t) = in(t-1)`
+    3.  **Inc:** `else if inc(t-1) then out(t) = out(t-1) + 1`
+    4.  **Else:** `out(t) = out(t-1)` (維持)
+* **Implementation:**
+    * 3つの `Mux16` を直列に配置し、優先度の高い操作を後段（Registerの直前）に置くことで制御する。
+    * `Register` の `load` ピンは常に `true` に固定し、毎クロック更新を行う。
+
 *Created by: hira-ping*

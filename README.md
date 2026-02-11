@@ -6,9 +6,9 @@ Building a modern computer system from first principles, starting with a single 
 
  [x] Project 01: Boolean Logic (Not, And, Or, Xor, Mux, DMux, 16-bit variants)
 
- [ ] Project 02: Boolean Arithmetic (HalfAdder, FullAdder, Inc16, ALU) 👈 Current Focus
+ [x] Project 02: Boolean Arithmetic (HalfAdder, FullAdder, Inc16, ALU) 
 
- [ ] Project 03: Sequential Logic (DFF, Bit, Register, RAM8/64/512/4K/16K, PC)
+ [ ] Project 03: Sequential Logic (DFF, Bit, Register, RAM8/64/512/4K/16K, PC)👈 Current Focus
 
  [ ] Project 04: Machine Language (Assembly scripts for Mult, Fill)
 
