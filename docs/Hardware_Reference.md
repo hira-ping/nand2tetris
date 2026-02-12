@@ -264,4 +264,24 @@ RAMは以下の「サンドイッチ構造」で実装される。
     * 3つの `Mux16` を直列に配置し、優先度の高い操作を後段（Registerの直前）に置くことで制御する。
     * `Register` の `load` ピンは常に `true` に固定し、毎クロック更新を行う。
 
+---
+
+## 5. System Architecture (システムアーキテクチャ)
+
+### Memory Map (メモリマップ)
+Hackコンピュータのアドレス空間（15ビット: 0〜32767）は、以下の3つのチップに物理的にマッピングされる。
+
+| Address Range | Address (Hex) | Target Chip | Description |
+| :--- | :--- | :--- | :--- |
+| **00000 - 16383** | `0x0000 - 0x3FFF` | **RAM16K** | データメモリ (Read/Write) |
+| **16384 - 24575** | `0x4000 - 0x5FFF` | **Screen** | 画面メモリマップ (Read/Write) |
+| **24576** | `0x6000` | **Keyboard** | キーボードメモリマップ (Read Only) |
+| 24577 - 32767 | `0x6001 - 0x7FFF` | (Unused) | 使用不可領域 |
+
+* **Mapping Logic (Project 05 Memory.hdl):**
+    * 最上位ビット `address[14]` が `0` → **RAM16K**
+    * 最上位ビット `address[14]` が `1`
+        * 次のビット `address[13]` が `0` → **Screen**
+        * 次のビット `address[13]` が `1` → **Keyboard**
+
 *Created by: hira-ping*
