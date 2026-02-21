@@ -8,13 +8,13 @@ Building a modern computer system from first principles, starting with a single 
 
  [x] Project 02: Boolean Arithmetic (HalfAdder, FullAdder, Inc16, ALU) 
 
- [ ] Project 03: Sequential Logic (DFF, Bit, Register, RAM8/64/512/4K/16K, PC)👈 Current Focus
+ [x] Project 03: Sequential Logic (DFF, Bit, Register, RAM8/64/512/4K/16K, PC)
 
- [ ] Project 04: Machine Language (Assembly scripts for Mult, Fill)
+ [x] Project 04: Machine Language (Assembly scripts for Mult, Fill)
 
- [ ] Project 05: Computer Architecture (Memory, CPU, Computer)
+ [x] Project 05: Computer Architecture (Memory, CPU, Computer)
 
- [ ] Project 06: Assembler (Software implementation)
+ [ ] Project 06: Assembler (Software implementation)👈 Current Focus
 
  [ ] Project 07: VM I: Stack Arithmetic
 

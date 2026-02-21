@@ -40,4 +40,65 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+    Not(in=instruction[15], out=isAinst);
+    Not(in=isAinst, out=isCinst);
+    
+    // 入力の選択
+    Mux16(a=instruction, b=aluOut, sel=isCinst, out=aRegIn);
+
+    //A Register への書き込みフラグ
+    And(a=isCinst, b=instruction[5], out=isDestA);
+    Or(a=isDestA, b=isAinst, out=loadA);
+    
+    // --- Aレジスタ本体 ---
+    ARegister(in=aRegIn, load=loadA, out=outA, out[0..14]=addressM);
+
+    // --- Dレジスタの書き込みフラグ---
+    And(a=isCinst, b=instruction[4], out=loadD);
+
+    // --- Dレジスタ本体 ---
+    DRegister(in=aluOut, load=loadD, out=outD);
+
+    // --- ALUの y 入力の選択 ---
+    // aビット(instruction[12]) が 0 なら outA、1 なら inM を選ぶ
+    Mux16(a=outA, b=inM, sel=instruction[12], out=aluY);
+
+    // --- ALU本体 ---
+    // x は Dレジスタ、 y は上で選んだ値
+    // 制御ビット(c1〜c6) は、C命令の該当ビット(instruction[6..11]) を直接繋ぐ
+    ALU(
+        x=outD, y=aluY,
+        zx=instruction[11], // c1
+        nx=instruction[10], // c2
+        zy=instruction[9],  // c3
+        ny=instruction[8],  // c4
+        f=instruction[7],   // c5
+        no=instruction[6],  // c6
+        out=aluOut,         // 計算結果（A, D, M レジスタへ向かう）
+        out=outM,           // CPUの出力としても外へ出す
+        zr=zrOut,           // 結果がゼロか？（PCのジャンプ判定に使う）
+        ng=ngOut            // 結果がマイナスか？（PCのジャンプ判定に使う）
+    );
+
+    // --- Part 3-3: メモリ(M)への書き込みフラグ ---
+    // C命令 かつ d3ビット(instruction[3]) が 1 のとき書き込む
+    And(a=isCinst, b=instruction[3], out=writeM);
+
+    //ALUの出力が正であるかを判定する
+    Or(a=zrOut, b=ngOut, out=zrOrngOut);
+    Not(in=zrOrngOut, out=posOut);
+
+    //ジャンプ条件の判定
+    And(a=instruction[2], b=ngOut, out=jumpLt);
+    And(a=instruction[1], b=zrOut, out=jumpEq);
+    And(a=instruction[0], b=posOut, out=jumpGt);
+    Or(a=jumpLt, b=jumpEq, out=jumpLe);
+    Or(a=jumpLe, b=jumpGt, out=jumpCond);
+    And(a=isCinst, b=jumpCond, out=loadPC);
+    //PC本体
+    // - in: ジャンプ先のアドレスは常にAレジスタの値(outA)
+    // - load: 上で作ったジャンプ実行フラグ
+    // - inc: 基本は常に次の命令へ進む (load=1 の時はそちらが優先される仕様)
+    // - reset: CPU全体のリセット信号をそのまま繋ぐ
+    PC(in=outA, load=loadPC, inc=true, reset=reset, out[0..14]=pc);
 }
